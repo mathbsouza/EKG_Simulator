@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EKG Simulator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/app/styles.css" />
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">Vector Injury Lab</p>
+          <h1>EKG Simulator</h1>
+          <p class="hero-copy">
+            Ajuste o vetor de injúria em 3D, observe a trajetória vetorial em
+            tempo real e compare o impacto nas derivações com o bullseye AHA de
+            dano segmentar.
+          </p>
+        </div>
+        <div class="hero-badge">
+          <span class="badge-title">Local session</span>
+          <strong id="server-status">Conectando…</strong>
+        </div>
+      </header>
+
+      <main class="dashboard">
+        <aside class="panel controls-panel">
+          <div class="panel-header">
+            <p class="panel-kicker">Inputs</p>
+            <h2>Configuração do vetor</h2>
+          </div>
+
+          <div class="angle-control-grid">
+            <section class="angle-card">
+              <div class="angle-card-header">
+                <h3>Plano frontal</h3>
+                <strong id="frontal-angle-value">0°</strong>
+              </div>
+              <p class="angle-copy">Ajusta a direção no eixo X-Z.</p>
+              <div class="angle-pad" id="frontal-pad">
+                <div class="angle-crosshair horizontal"></div>
+                <div class="angle-crosshair vertical"></div>
+                <div class="angle-ring-label top">Superior</div>
+                <div class="angle-ring-label right">X+</div>
+                <div class="angle-ring-label bottom">Inferior</div>
+                <div class="angle-ring-label left">X-</div>
+                <div class="angle-handle" id="frontal-handle"></div>
+              </div>
+              <div class="value-row">
+                <span>Projeção frontal</span>
+                <strong id="frontal-vector-value">[0.00, 0.00]</strong>
+              </div>
+            </section>
+
+            <section class="angle-card">
+              <div class="angle-card-header">
+                <h3>Plano horizontal</h3>
+                <strong id="horizontal-angle-value">0°</strong>
+              </div>
+              <p class="angle-copy">Ajusta a direção no eixo X-Y.</p>
+              <div class="angle-pad" id="horizontal-pad">
+                <div class="angle-crosshair horizontal"></div>
+                <div class="angle-crosshair vertical"></div>
+                <div class="angle-ring-label top">Anterior</div>
+                <div class="angle-ring-label right">X+</div>
+                <div class="angle-ring-label bottom">Posterior</div>
+                <div class="angle-ring-label left">X-</div>
+                <div class="angle-handle" id="horizontal-handle"></div>
+              </div>
+              <div class="value-row">
+                <span>Projeção horizontal</span>
+                <strong id="horizontal-vector-value">[0.00, 0.00]</strong>
+              </div>
+            </section>
+          </div>
+
+          <div class="control-group">
+            <label for="magnitude-range">Magnitude</label>
+            <input id="magnitude-range" type="range" min="0" max="1.2" step="0.01" value="0.94" />
+            <div class="value-row">
+              <span>Comprimento do vetor de injúria</span>
+              <strong id="magnitude-value">0.94</strong>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <label for="st-gain-range">Ganho do supra de ST</label>
+            <input
+              id="st-gain-range"
+              type="range"
+              min="0"
+              max="0.8"
+              step="0.01"
+              value="0.25"
+            />
+            <div class="value-row">
+              <span>Amplitude aplicada ao segmento ST</span>
+              <strong id="st-gain-value">0.25</strong>
+            </div>
+          </div>
+
+          <div class="quick-actions">
+            <button class="preset-button" data-preset="anterior">Anterior</button>
+            <button class="preset-button" data-preset="inferior">Inferior</button>
+            <button class="preset-button" data-preset="lateral">Lateral</button>
+            <button class="preset-button" data-preset="neutral">Neutro</button>
+          </div>
+
+          <section class="model-library">
+            <div class="panel-header">
+              <p class="panel-kicker">OMI Sem Supra</p>
+              <h2>Modelos pré-prontos</h2>
+            </div>
+            <div class="model-button-list" id="omi-model-list"></div>
+          </section>
+
+          <div class="summary-card">
+            <p class="panel-kicker">Resumo</p>
+            <div class="metric-grid">
+              <div>
+                <span>Magnitude</span>
+                <strong id="vector-magnitude">0.00</strong>
+              </div>
+              <div>
+                <span>Vetor cartesiano</span>
+                <strong id="cartesian-vector">[0, 0, 0]</strong>
+              </div>
+              <div>
+                <span>Derivação mais positiva</span>
+                <strong id="top-lead">-</strong>
+              </div>
+              <div>
+                <span>Segmento dominante</span>
+                <strong id="top-segment">-</strong>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <section class="panel main-visuals">
+          <div class="panel-header split">
+            <div>
+              <p class="panel-kicker">3D view</p>
+              <h2>Espaço vetorial e zona cega</h2>
+            </div>
+            <p class="panel-caption">
+              Vetor 3D atual e área potencialmente “escondida” do ECG de 12 derivações padrão.
+            </p>
+          </div>
+          <div class="plot-grid">
+            <section class="mini-panel mini-panel-visual">
+              <div class="mini-panel-header">
+                <h3>Vetor de injúria</h3>
+                <span>Espaço cardíaco</span>
+              </div>
+              <div id="vector-plot" class="plot plot-large"></div>
+            </section>
+            <section class="mini-panel mini-panel-visual">
+              <div class="mini-panel-header">
+                <h3>Zona cega do ECG padrão</h3>
+                <span id="hidden-space-status">Calculando…</span>
+              </div>
+              <div id="hidden-space-plot" class="plot plot-large"></div>
+            </section>
+          </div>
+          <section class="mini-panel lead-polarity-panel">
+            <div class="mini-panel-header">
+              <h3>Polaridade das derivações</h3>
+              <span>Positiva ou negativa</span>
+            </div>
+            <div id="lead-bar-plot" class="plot plot-leads"></div>
+          </section>
+        </section>
+
+        <section class="panel side-visuals">
+          <div class="panel-header">
+            <p class="panel-kicker">AHA map</p>
+            <h2>Bullseye e barplots</h2>
+          </div>
+          <div class="stacked-plots">
+            <section class="mini-panel">
+              <div class="mini-panel-header">
+                <h3>Bullseye AHA</h3>
+                <span>Dano segmentar</span>
+              </div>
+              <div id="bullseye-plot" class="plot plot-bullseye"></div>
+            </section>
+            <section class="mini-panel">
+              <div class="mini-panel-header">
+                <h3>Barplot de lesão</h3>
+                <span>Intensidade por segmento</span>
+              </div>
+              <div id="damage-bar-plot" class="plot plot-damage-bar"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="panel ecg-panel">
+          <div class="panel-header split">
+            <div>
+              <p class="panel-kicker">12-lead ECG</p>
+              <h2>Traçados simulados</h2>
+            </div>
+            <p class="panel-caption">
+              Projeções do vetor resultante nas derivações principais.
+            </p>
+          </div>
+          <div id="ecg-grid" class="ecg-grid"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="/app/app.js"></script>
+  </body>
+</html>

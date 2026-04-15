@@ -3,3 +3,6 @@ plotly
 matplotlib
 ipywidgets
 ipython
+fastapi
+uvicorn
+pydantic

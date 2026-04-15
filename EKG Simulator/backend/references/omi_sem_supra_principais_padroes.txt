@@ -1,0 +1,201 @@
+PRINCIPAIS PADROES DE OMI SEM SUPRA CLASSICO DE ST
+
+OBJETIVO DESTE ARQUIVO
+- Resumir padroes de OMI sem supra classico de ST.
+- Sugerir configuracoes aproximadas de vetor de injuria para uso no simulador.
+- Os vetores abaixo sao heuristicas didaticas, nao "valores oficiais".
+
+SISTEMA DE EIXOS USADO NO SIMULADOR
+- X = direita (+) / esquerda (-)
+- Y = anterior (+) / posterior (-)
+- Z = superior (+) / inferior (-)
+
+COMO INTERPRETAR OS VETORES
+- Vetores maiores em Y positivo tendem a projetar mais para precordiais anteriores.
+- Vetores com Y negativo favorecem parede posterior.
+- Vetores com Z negativo favorecem territorio inferior.
+- Vetores com X negativo favorecem territorio lateral esquerdo.
+- Vetores com X positivo favorecem territorio direito / V1 / V3R / V4R.
+
+1. DE WINTER
+- Contexto tipico:
+  Oclusao aguda de LAD proximal ou media, com padrao de OMI anterior sem supra classico.
+- Achados ECG:
+  ST depressao ascendente no ponto J em V1-V6, sobretudo V2-V4.
+  T hiperagudas, altas e simetricas nas precordiais.
+  Pode haver discreto supra em aVR.
+- Vetor de injuria sugerido:
+  Direcao principal antero-septal, levemente superior.
+  Exemplo: [0.25, 0.95, 0.20]
+- Variantes uteis:
+  Mais septal/proximal: [0.40, 0.90, 0.25]
+  Mais anterior amplo: [0.10, 1.00, 0.10]
+- Observacao:
+  Se o modelo gerar muito supra classico em V2-V4, reduza amplitude e mantenha T mais hiperaguda do que o ST.
+
+2. WELLENS
+- Contexto tipico:
+  Lesao critica de LAD, muitas vezes em fase de reperfusao e nao de oclusao persistente.
+- Achados ECG:
+  Pouca ou nenhuma elevacao de ST.
+  T bipasicas ou profundamente invertidas em V2-V3, podendo se estender.
+- Vetor de injuria sugerido:
+  Este padrao combina melhor com vetor pequeno ou quase nulo de ST e alteracao de repolarizacao anterior.
+  Exemplo de vetor de injuria residual: [0.10, 0.35, 0.05]
+- Variantes uteis:
+  Reperfusao anterior mais lateral: [0.00, 0.30, 0.00]
+- Observacao:
+  No simulador, Wellens costuma funcionar melhor alterando T wave e reduzindo muito o vetor de ST.
+
+3. OMI POSTERIOR
+- Contexto tipico:
+  Oclusao de LCx ou RCA dominante com infarto posterior isolado/predominante.
+- Achados ECG:
+  ST depressao horizontal em V1-V3.
+  R altas em V1-V3.
+  T positivas em V1-V3.
+  V7-V9 ajudam a revelar supra posterior.
+- Vetor de injuria sugerido:
+  Direcao posterior e geralmente lateral esquerda, com pouco componente superior/inferior.
+  Exemplo: [-0.45, -0.90, 0.00]
+- Variantes uteis:
+  Posterolateral puro: [-0.60, -0.80, 0.00]
+  Posteroinferior: [-0.35, -0.80, -0.30]
+- Observacao:
+  Se quiser mais "espelho" em V1-V3, aumente o componente posterior negativo em Y.
+
+4. ASLANGER
+- Contexto tipico:
+  OMI inferior em paciente com doenca multiarterial, mascarado por isquemia subendocardica difusa.
+- Achados ECG:
+  Algum supra em DIII, sem supra nas outras inferiores.
+  ST depressao em V4-V6.
+  ST em V1 maior que em V2.
+- Vetor de injuria sugerido:
+  Direcao infero-direita, com componente anterior discreto e relativamente focal.
+  Exemplo: [0.55, 0.20, -0.80]
+- Variantes uteis:
+  Mais inferior e mais focal em DIII: [0.65, 0.10, -0.85]
+  Com mais componente anterior em V1: [0.55, 0.35, -0.75]
+- Observacao:
+  Para ficar mais "Aslanger", combine esse vetor com um padrao adicional de depressao subendocardica difusa no restante do ECG.
+
+5. NORTHERN OMI
+- Contexto tipico:
+  Padrao emergente, associado a OMI de alto risco e possivel doenca multiarterial/tronco/LAD/LCx.
+- Achados ECG:
+  Supra em aVR e aVL.
+  T negativas em aVR/aVL.
+  ST depressao em derivacoes inferiores e precordiais laterais.
+- Vetor de injuria sugerido:
+  Direcao superior e esquerda, com componente posterior ou pouco anterior.
+  Exemplo: [-0.70, -0.20, 0.85]
+- Variantes uteis:
+  Mais alto-lateral puro: [-0.80, 0.00, 0.90]
+  Mais postero-superior: [-0.65, -0.35, 0.80]
+- Observacao:
+  E um padrao recente; trate o vetor como configuracao experimental no simulador.
+
+6. PRECORDIAL SWIRL
+- Contexto tipico:
+  OMI por LAD proximal, frequentemente antes do primeiro septal.
+- Achados ECG:
+  Elevacao de ST e/ou T hiperaguda em V1-V2.
+  Depressao de ST e/ou inversao de T em V5-V6.
+- Vetor de injuria sugerido:
+  Direcao antero-direita e superior, com dominancia septal.
+  Exemplo: [0.55, 0.85, 0.35]
+- Variantes uteis:
+  Mais septal: [0.70, 0.80, 0.30]
+  Mais antero-superior: [0.45, 0.90, 0.40]
+- Observacao:
+  Esse padrao costuma ficar bom quando o vetor e mais dirigido a V1-V2 do que a V4-V6.
+
+7. OMI ANTERIOR SUTIL / T HIPERAGUDA
+- Contexto tipico:
+  Oclusao anterior precoce sem criterios plenos de STEMI.
+- Achados ECG:
+  T desproporcionalmente grandes em relacao ao QRS.
+  Retificacao do ST.
+  Perda de progressao de R.
+  Eventual distorsao terminal do QRS.
+- Vetor de injuria sugerido:
+  Direcao anterior, pouco intensa, com amplitude menor do que em de Winter.
+  Exemplo: [0.10, 0.75, 0.05]
+- Variantes uteis:
+  Mais septal: [0.25, 0.70, 0.10]
+  Mais anterior puro: [0.00, 0.80, 0.00]
+- Observacao:
+  Aqui a forma da T costuma ser mais importante do que a amplitude do ST.
+
+8. OMI LATERAL OU INFEROLATERAL SUTIL
+- Contexto tipico:
+  LCx, marginal obtusa ou diagonal, muitas vezes com alteracoes discretas.
+- Achados ECG:
+  Alteracoes em I, aVL, V5, V6.
+  Reciprocas inferiores leves.
+- Vetor de injuria sugerido:
+  Lateral esquerdo com componente inferior leve.
+  Exemplo: [-0.85, 0.10, -0.25]
+- Variantes uteis:
+  Lateral alto puro: [-0.90, 0.00, 0.20]
+  Inferolateral: [-0.80, 0.05, -0.40]
+- Observacao:
+  Se quiser enfatizar aVL/I, aumente o modulo em X negativo.
+
+9. OMI INFERIOR SUTIL
+- Contexto tipico:
+  RCA ou LCx com pouca elevacao de ST, especialmente no inicio ou em multivascular.
+- Achados ECG:
+  Alteracoes inferiores discretas, reciprocas em aVL/I, eventualmente envolvimento de VD ou posterior.
+- Vetor de injuria sugerido:
+  Inferior, com direcao a direita se RCA, ou mais a esquerda se LCx.
+- Exemplo RCA-like:
+  [0.35, 0.10, -0.95]
+- Exemplo LCx-like:
+  [-0.25, -0.10, -0.95]
+- Observacao:
+  Este item ajuda bastante para compor variantes do Aslanger e de OMI posteroinferior.
+
+CONFIGURACOES RAPIDAS PARA TESTAR NO SIMULADOR
+- de Winter: [0.25, 0.95, 0.20]
+- Wellens residual: [0.10, 0.35, 0.05]
+- Posterior: [-0.45, -0.90, 0.00]
+- Aslanger: [0.55, 0.20, -0.80]
+- Northern OMI: [-0.70, -0.20, 0.85]
+- Precordial swirl: [0.55, 0.85, 0.35]
+- Anterior sutil: [0.10, 0.75, 0.05]
+- Inferolateral: [-0.80, 0.05, -0.40]
+- Inferior RCA-like: [0.35, 0.10, -0.95]
+
+COMO USAR NO PROJETO
+- Se voce for injetar um vetor fixo manualmente:
+  current_vector = np.array([X, Y, Z])
+- Se for usar como vetor de ST:
+  combine o vetor acima com uma janela temporal do ST/J-point.
+- Em padroes de reperfusao (ex.: Wellens), prefira reduzir o vetor de ST e modelar mais fortemente a T wave.
+- Em padroes mascarados (ex.: Aslanger, Northern OMI), pode ser necessario somar:
+  1. um vetor focal de injuria
+  2. um componente difuso/subendocardico de sinal oposto em outras derivacoes
+
+FONTES USADAS
+- De Winter ECG pattern - StatPearls/NCBI Bookshelf:
+  https://www.ncbi.nlm.nih.gov/books/NBK557573/
+- Morris NP, Body R. The De Winter ECG pattern: morphology and accuracy for diagnosing acute coronary occlusion: systematic review. PubMed:
+  https://pubmed.ncbi.nlm.nih.gov/28362646/
+- Posterior Myocardial Infarction - StatPearls/NCBI Bookshelf:
+  https://www.ncbi.nlm.nih.gov/books/NBK553168/
+- Aslanger pattern: A case report. PMC:
+  https://pmc.ncbi.nlm.nih.gov/articles/PMC11954596/
+- Clinical Features of the Aslanger Pattern to Compensate for the Limitation of STEMI Criteria. PubMed:
+  https://pubmed.ncbi.nlm.nih.gov/36601361/
+- Barros I et al. Aslanger Pattern: A Sign of an Acute Coronary Occlusion. PubMed:
+  https://pubmed.ncbi.nlm.nih.gov/40568275/
+- Ricci F et al. ECG Patterns of Occlusion Myocardial Infarction: A Narrative Review. ScienceDirect:
+  https://www.sciencedirect.com/science/article/pii/S0196064424012502
+- Ni H et al. A new and modified northern occlusion myocardial infarction pattern. PubMed:
+  https://pubmed.ncbi.nlm.nih.gov/41719915/
+
+OBSERVACAO FINAL
+- Os vetores acima sao aproximacoes anatomico-eletrocardiograficas para prototipagem.
+- Se voce quiser, o proximo passo natural e eu transformar este arquivo em uma tabela JSON/Python para o simulador carregar automaticamente.
