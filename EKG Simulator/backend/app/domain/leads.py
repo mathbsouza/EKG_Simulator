@@ -15,17 +15,17 @@ LIMB_LEADS: dict[str, np.ndarray] = {
 }
 
 PRECORDIAL_LEADS: dict[str, np.ndarray] = {
-    "V1": chest_lead(0.55, 0.85, 0.05),
-    "V2": chest_lead(0.35, 0.90, 0.05),
-    "V3": chest_lead(0.10, 0.95, 0.00),
-    "V4": chest_lead(-0.20, 0.95, -0.05),
-    "V5": chest_lead(-0.45, 0.85, -0.05),
-    "V6": chest_lead(-0.65, 0.75, 0.00),
-    "V3R": chest_lead(0.60, 0.60, 0.00),
-    "V4R": chest_lead(0.70, 0.50, -0.05),
-    "V7": chest_lead(-0.75, -0.20, 0.00),
-    "V8": chest_lead(-0.70, -0.45, 0.00),
-    "V9": chest_lead(-0.60, -0.65, 0.00),
+    "V1": chest_lead(0.61, 0.59, 0.43),
+    "V2": chest_lead(0.37, 0.61, 0.43),
+    "V3": chest_lead(0.13, 0.58, 0.11),
+    "V4": chest_lead(-0.11, 0.51, -0.32),
+    "V5": chest_lead(-0.32, 0.34, -0.32),
+    "V6": chest_lead(-0.48, 0.11, -0.32),
+    "V3R": chest_lead(0.91, 0.51, 0.12),
+    "V4R": chest_lead(1.13, 0.46, -0.30),
+    "V7": chest_lead(-0.54, -0.10, -0.32),
+    "V8": chest_lead(-0.60, -0.34, -0.32),
+    "V9": chest_lead(-0.68, -0.64, -0.32),
 }
 
 LEAD_VECTORS: dict[str, np.ndarray] = {**LIMB_LEADS, **PRECORDIAL_LEADS}

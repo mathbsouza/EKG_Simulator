@@ -36,6 +36,14 @@ cd backend
 uvicorn app.main:app --reload
 ```
 
+Abra no navegador:
+
+```text
+http://127.0.0.1:8000/dev
+```
+
+Essa rota ativa recarga automática no browser quando você alterar arquivos `frontend/*.html`, `frontend/*.css`, `frontend/*.js` ou `backend/app/*.py`, o que permite ajustar as derivações e ver o resultado ao vivo.
+
 Endpoint principal:
 
 ```text

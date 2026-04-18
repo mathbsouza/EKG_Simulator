@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Editor de Derivações</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/app/styles.css" />
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+  </head>
+  <body>
+    <div class="page-shell editor-shell">
+      <header class="hero editor-hero">
+        <div>
+          <p class="eyebrow">Lead Editor</p>
+          <h1>Editor de Derivações</h1>
+          <p class="hero-copy">
+            Ajuste o posicionamento das derivações precordiais com drag and drop
+            em dois planos leves e salve diretamente em
+            <code>leads.py</code>.
+          </p>
+        </div>
+        <div class="hero-badge">
+          <span class="badge-title">Status</span>
+          <strong id="editor-status">Carregando…</strong>
+        </div>
+      </header>
+
+      <main class="editor-layout">
+        <section class="panel editor-main">
+          <div class="panel-header split">
+            <div>
+              <p class="panel-kicker">Drag and Drop</p>
+              <h2>Planos de ajuste</h2>
+            </div>
+            <p class="panel-caption">
+              Use <code>XY</code> para definir <code>x/y</code> e <code>XZ</code> para definir <code>x/z</code>.
+            </p>
+          </div>
+          <div class="editor-plane-grid">
+            <section class="mini-panel editor-plane-panel">
+              <div class="mini-panel-header">
+                <h3>Plano XY</h3>
+                <span>Corte superior do bullseye 3D</span>
+              </div>
+              <canvas id="plane-xy" class="editor-plane-canvas" width="420" height="420"></canvas>
+            </section>
+            <section class="mini-panel editor-plane-panel">
+              <div class="mini-panel-header">
+                <h3>Plano XZ</h3>
+                <span>Corte frontal do bullseye 3D</span>
+              </div>
+              <canvas id="plane-xz" class="editor-plane-canvas" width="420" height="420"></canvas>
+            </section>
+          </div>
+          <div class="editor-actions editor-generate-row">
+            <button id="generate-3d-button" class="preset-button editor-generate">Gerar imagem 3D com bullseye</button>
+          </div>
+          <div id="editor-3d-plot" class="plot plot-large editor-3d-plot"></div>
+        </section>
+
+        <aside class="panel editor-sidebar">
+          <div class="panel-header">
+            <p class="panel-kicker">Leads</p>
+            <h2>Selecionar e salvar</h2>
+          </div>
+          <div class="editor-actions">
+            <button id="save-leads-button" class="preset-button editor-save">Salvar</button>
+            <button id="reload-leads-button" class="preset-button editor-reload">Recarregar</button>
+          </div>
+          <div id="lead-detail" class="editor-detail"></div>
+          <div id="lead-list" class="editor-lead-list"></div>
+        </aside>
+      </main>
+    </div>
+
+    <script src="/app/electrode-editor.js"></script>
+  </body>
+</html>

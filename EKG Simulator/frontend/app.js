@@ -139,6 +139,8 @@ const plotTheme = {
   },
 };
 
+const BULLSEYE_ROTATION_OFFSET = 0;
+
 function formatNumber(value) {
   return Number(value).toFixed(2);
 }
@@ -278,6 +280,152 @@ function makeSphereTrace() {
   };
 }
 
+function bullseyeZ(radius) {
+  const zBasal = 0.25;
+  const zMid = -0.25;
+  const zApical = -0.9;
+  const slope1 = (zMid - zApical) / 0.4;
+  const slope2 = (zBasal - zMid) / 0.3;
+  if (radius < 0.4) return zApical + slope1 * radius;
+  if (radius < 0.7) return zMid + slope2 * (radius - 0.4);
+  return zBasal + slope2 * (radius - 0.7);
+}
+
+function bullseyePolarPoint(radius, angleDeg) {
+  const angle = degreesToRadians(angleDeg) + BULLSEYE_ROTATION_OFFSET;
+  return {
+    x: radius * Math.cos(angle),
+    y: radius * Math.sin(angle),
+    z: bullseyeZ(radius),
+  };
+}
+
+function buildBullseyeMesh() {
+  const segmentColors = [
+    "#8FAADC", "#F6BD60", "#F28482", "#84A59D", "#90BE6D", "#F7EDE2",
+    "#CDB4DB", "#FFC8DD", "#B5838D", "#A0C4FF", "#BDB2FF", "#FFD6A5",
+    "#CAFFBF", "#FFADAD", "#D0F4DE", "#FDFFB6", "#9BF6FF",
+  ];
+  const anglesBasal = [0, 60, 120, 180, 240, 300];
+  const anglesMid = [0, 60, 120, 180, 240, 300];
+  const anglesApical = [45, 135, 225, 315];
+  const segments = [];
+  let colorIndex = 0;
+
+  function addRing(innerRadius, outerRadius, angles) {
+    for (let index = 0; index < angles.length; index += 1) {
+      const startDeg = angles[index];
+      const endDeg = angles[(index + 1) % angles.length];
+      const angleEnd = endDeg <= startDeg ? endDeg + 360 : endDeg;
+      const rows = [];
+
+      for (let angleStep = 0; angleStep <= 28; angleStep += 1) {
+        const angleDeg = startDeg + ((angleEnd - startDeg) * angleStep) / 28;
+        const row = [];
+        for (let radiusStep = 0; radiusStep <= 12; radiusStep += 1) {
+          const radius = innerRadius + ((outerRadius - innerRadius) * radiusStep) / 12;
+          row.push(bullseyePolarPoint(radius, angleDeg));
+        }
+        rows.push(row);
+      }
+
+      segments.push({
+        rows,
+        color: segmentColors[colorIndex],
+      });
+      colorIndex += 1;
+    }
+  }
+
+  addRing(0.70, 1.00, anglesBasal);
+  addRing(0.40, 0.70, anglesMid);
+  addRing(0.18, 0.40, anglesApical);
+
+  const apexRows = [];
+  for (let angleStep = 0; angleStep <= 28; angleStep += 1) {
+    const angleDeg = (360 * angleStep) / 28;
+    const row = [];
+    for (let radiusStep = 0; radiusStep <= 12; radiusStep += 1) {
+      const radius = (0.18 * radiusStep) / 12;
+      row.push(bullseyePolarPoint(radius, angleDeg));
+    }
+    apexRows.push(row);
+  }
+  segments.push({
+    rows: apexRows,
+    color: segmentColors[16],
+  });
+
+  return {
+    segments,
+    radialLines: [
+      ...anglesBasal.map((angle) => ({ startRadius: 0.70, endRadius: 1.00, angleDeg: angle })),
+      ...anglesMid.map((angle) => ({ startRadius: 0.40, endRadius: 0.70, angleDeg: angle })),
+      ...anglesApical.map((angle) => ({ startRadius: 0.18, endRadius: 0.40, angleDeg: angle })),
+    ],
+  };
+}
+
+function buildBullseye3DTraces() {
+  const geometry = buildBullseyeMesh();
+  const traces = [];
+
+  geometry.segments.forEach((segment) => {
+    const x = segment.rows.map((row) => row.map((point) => point.x));
+    const y = segment.rows.map((row) => row.map((point) => point.y));
+    const z = segment.rows.map((row) => row.map((point) => point.z));
+    const surfacecolor = segment.rows.map((row) => row.map(() => 1));
+
+    traces.push({
+      type: "surface",
+      x,
+      y,
+      z,
+      surfacecolor,
+      colorscale: [[0, segment.color], [1, segment.color]],
+      opacity: 0.72,
+      showscale: false,
+      showlegend: false,
+      hoverinfo: "skip",
+      contours: {
+        x: { show: false },
+        y: { show: false },
+        z: { show: false },
+      },
+    });
+  });
+
+  const thetaLine = Array.from({ length: 241 }, (_, index) => (2 * Math.PI * index) / 240);
+  [[0.18, 5], [0.4, 5], [0.7, 5], [1.0, 6]].forEach(([radius, width]) => {
+    traces.push({
+      type: "scatter3d",
+      mode: "lines",
+      x: thetaLine.map((theta) => radius * Math.cos(theta + BULLSEYE_ROTATION_OFFSET)),
+      y: thetaLine.map((theta) => radius * Math.sin(theta + BULLSEYE_ROTATION_OFFSET)),
+      z: thetaLine.map(() => bullseyeZ(radius)),
+      line: { color: "black", width },
+      hoverinfo: "skip",
+      showlegend: false,
+    });
+  });
+
+  geometry.radialLines.forEach(({ startRadius, endRadius, angleDeg }) => {
+    const angle = degreesToRadians(angleDeg) + BULLSEYE_ROTATION_OFFSET;
+    traces.push({
+      type: "scatter3d",
+      mode: "lines",
+      x: [startRadius * Math.cos(angle), endRadius * Math.cos(angle)],
+      y: [startRadius * Math.sin(angle), endRadius * Math.sin(angle)],
+      z: [bullseyeZ(startRadius), bullseyeZ(endRadius)],
+      line: { color: "black", width: 3 },
+      hoverinfo: "skip",
+      showlegend: false,
+    });
+  });
+
+  return traces;
+}
+
 function buildLeadTraces() {
   const allLeads = Object.entries(state.meta.lead_vectors);
   const limbLeads = allLeads.filter(([name]) => !name.startsWith("V"));
@@ -359,7 +507,7 @@ function isVectorHidden(vector, threshold = 0.25) {
 function renderVectorPlot(simulation) {
   const inputVector = simulation.input_vector;
   const data = [
-    makeSphereTrace(),
+    ...buildBullseye3DTraces(inputVector),
     ...buildLeadTraces(),
     {
       type: "scatter3d",
@@ -385,7 +533,7 @@ function renderVectorPlot(simulation) {
         yaxis: { title: "Y", range: [-1.2, 1.2], backgroundcolor: "rgba(255,255,255,0)" },
         zaxis: { title: "Z", range: [-1.2, 1.2], backgroundcolor: "rgba(255,255,255,0)" },
         aspectmode: "cube",
-        camera: { eye: { x: 1.65, y: 1.45, z: 1.15 } },
+        camera: { eye: { x: 1.55, y: 1.45, z: 1.05 } },
       },
       showlegend: true,
       legend: {

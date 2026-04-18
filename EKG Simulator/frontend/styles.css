@@ -34,6 +34,10 @@ body {
   padding: 24px 0 40px;
 }
 
+.editor-shell {
+  width: min(1560px, calc(100vw - 32px));
+}
+
 .hero {
   display: flex;
   justify-content: space-between;
@@ -136,16 +140,119 @@ h2 {
   padding: 18px;
 }
 
-.controls-panel {
-  grid-column: 1;
-  grid-row: 1 / span 3;
-  align-self: start;
+.editor-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 16px;
+  align-items: start;
 }
 
-.main-visuals,
-.side-visuals,
-.ecg-panel {
-  grid-column: 2;
+.editor-sidebar,
+.editor-main,
+ .editor-preview-panel {
+  padding: 18px;
+}
+
+.editor-lead-list {
+  display: grid;
+  gap: 8px;
+}
+
+.editor-lead-button {
+  display: grid;
+  grid-template-columns: 14px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+  border: 1px solid rgba(17, 38, 45, 0.08);
+  border-radius: 16px;
+  background: rgba(255, 250, 242, 0.9);
+  color: var(--ink);
+  padding: 10px 12px;
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.editor-lead-button.is-active {
+  border-color: rgba(13, 107, 115, 0.36);
+  background: rgba(215, 235, 229, 0.7);
+}
+
+.editor-lead-coords {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-family: "Menlo", "IBM Plex Sans", monospace;
+}
+
+.editor-lead-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid rgba(17, 38, 45, 0.4);
+  flex: 0 0 auto;
+}
+
+.editor-detail {
+  margin: 14px 0 18px;
+  white-space: pre-line;
+  font-family: "Menlo", "IBM Plex Sans", monospace;
+  line-height: 1.5;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(255, 250, 242, 0.94), rgba(248, 241, 231, 0.82));
+  border: 1px solid rgba(17, 38, 45, 0.08);
+}
+
+.editor-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.editor-save,
+.editor-reload {
+  min-width: 140px;
+}
+
+.editor-plane-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.editor-plane-panel {
+  padding: 14px;
+}
+
+.editor-plane-canvas {
+  width: 100%;
+  max-width: 420px;
+  aspect-ratio: 1;
+  display: block;
+  margin: 0 auto;
+  border-radius: 20px;
+  background: #fffdf9;
+  touch-action: none;
+  cursor: grab;
+}
+
+.editor-plane-canvas:active {
+  cursor: grabbing;
+}
+
+.editor-generate-row {
+  margin-top: 14px;
+}
+
+.editor-generate {
+  min-width: 220px;
+}
+
+.editor-3d-plot {
+  margin-top: 8px;
+  min-height: 420px;
 }
 
 .panel-header {

@@ -26,3 +26,19 @@ class SimulationResponse(BaseModel):
     ecg: dict[str, list[float]]
     lead_projection: dict[str, float]
     damage_segments: list[DamageSegment]
+
+
+class LeadPosition(BaseModel):
+    x: float
+    y: float
+    z: float
+
+
+class LeadEditorResponse(BaseModel):
+    lead_order: list[str]
+    leads: dict[str, LeadPosition]
+    source_file: str
+
+
+class LeadEditorUpdateRequest(BaseModel):
+    leads: dict[str, LeadPosition]
